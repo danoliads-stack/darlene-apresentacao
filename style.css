@@ -224,3 +224,7 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none;bor
   .nav-curta .nav a,.nav-curta .nav button{font-size:0;gap:0;justify-content:center}
   .nav-curta .recolher .i{transform:rotate(180deg)}
 }
+
+/* topo alinhado com o conteúdo (.wrap: 1100px + 20px de respiro) */
+.top{padding-inline:max(20px,calc((100% - 1100px) / 2 + 20px))}
+.top .logo img{margin-left:0}
