@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel · Área de Membros</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="tema.js"></script>
+<style>
+body{padding-bottom:40px}
+.adm input,.adm textarea,.adm select{width:100%;background:var(--inner);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--txt);font:inherit;font-size:.88rem}
+.adm label{font-size:.78rem;color:var(--mut);display:block}
+.cx{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.cx.mod2{background:var(--nav);margin:12px 0 0}
+.l2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}
+.aula2{display:grid;grid-template-columns:28px 1fr 1.3fr 90px 34px;gap:8px;align-items:center;margin-top:8px}
+.aula2 .thumb{width:90px;aspect-ratio:16/9;border-radius:6px;background:#000 center/cover;display:grid;place-items:center;font-size:.65rem;color:var(--mut)}
+.mini-btn{background:var(--inner);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 12px;font-size:.8rem}
+.mini-btn:hover{border-color:var(--ac)}
+.x{background:none;border:1px solid var(--line);color:#d9534f;border-radius:8px;height:34px}
+summary{cursor:pointer;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.barra-topo{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--ac);color:#13241b;padding:10px 16px;border-radius:10px;font-weight:600;opacity:0;transition:.3s}
+.toast.on{opacity:1}
+.aula2.cab{grid-template-columns:auto 1fr auto auto auto;margin:0}
+.cab>span{display:flex;gap:8px}
+.botoes-aula{display:flex;flex-direction:column;gap:2px}
+@media(max-width:700px){.aula2{grid-template-columns:1fr 34px}.aula2 .n,.aula2 .thumb{display:none}
+.aula2.cab{grid-template-columns:1fr auto auto auto}.cab>span{grid-column:1/-1;order:5;flex-direction:column}
+.aula2:not(.cab)>input{grid-column:1/-1}.botoes-aula{grid-column:1/-1;flex-direction:row;justify-content:flex-end;gap:8px}.botoes-aula .x,.botoes-aula .x.mover{height:34px}}
+</style>
+</head>
+<body>
+<header class="top"><span class="logo">Painel<small>Cursos, módulos e aulas</small></span>
+  <div class="barra-topo"><span id="bt"></span><a class="mini-btn" href="area.html" target="_blank">Ver área de membros <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a></div></header>
+<main class="wrap adm" id="app"></main>
+<div class="toast" id="toast"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Salvo</div>
+<script src="dados.js"></script>
+<script>
+// shortcut: salva no navegador (localStorage), só serve para a demonstração.
+// Na versão real, "salvar" grava no banco (Cloudflare D1) e o painel fica atrás de login de administradora.
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+let cursos = JSON.parse(JSON.stringify(CURSOS)); // dados.js já aplica o que foi salvo antes
+let aberto = cursos[0]?.id;
+
+// Aceita link inteiro do YouTube (watch, youtu.be, shorts, embed) ou só o ID.
+function idYoutube(txt) {
+  txt = (txt || "").trim();
+  const m = txt.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);
+  return m ? m[1] : /^[\w-]{11}$/.test(txt) ? txt : "";
+}
+console.assert(idYoutube("https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=1") === "dQw4w9WgXcQ");
+console.assert(idYoutube("https://youtu.be/dQw4w9WgXcQ") === "dQw4w9WgXcQ");
+console.assert(idYoutube("https://youtube.com/shorts/dQw4w9WgXcQ") === "dQw4w9WgXcQ");
+console.assert(idYoutube("dQw4w9WgXcQ") === "dQw4w9WgXcQ" && idYoutube("bobagem") === "");
+
+let timer;
+function salvar() {
+  localStorage.setItem("cursosPainel", JSON.stringify(cursos));
+  clearTimeout(timer); $("#toast").classList.add("on"); timer = setTimeout(() => $("#toast").classList.remove("on"), 1200);
+}
+const slug = (t) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "curso";
+
+// edição de campo sem redesenhar (não perde o foco do teclado)
+function campo(ci, k, v) { cursos[ci][k] = v; salvar(); if (k === "titulo") $(`#t${ci}`).textContent = v; }
+function campoMod(ci, mi, v) { cursos[ci].modulos[mi].titulo = v; salvar(); }
+function campoAula(ci, mi, ai, k, v, el) {
+  const a = cursos[ci].modulos[mi].aulas[ai];
+  if (k === "video") {
+    a.video = idYoutube(v);
+    el.style.borderColor = v && !a.video ? "#d9534f" : "";
+    $(`#th${ci}-${mi}-${ai}`).outerHTML = thumb(ci, mi, ai);
+  } else a[k] = v;
+  salvar();
+}
+
+// mudanças de estrutura: redesenha
+function acao(fn) { fn(); salvar(); desenhar(); }
+const novoCurso = () => acao(() => { const id = slug("novo curso " + Date.now().toString(36)); cursos.push({ id, titulo: "Novo curso", descricao: "", cor: "#2e5e45", preco: "", linkCompra: "", modulos: [] }); aberto = id; });
+const apagarCurso = (ci) => confirm(`Apagar o curso "${cursos[ci].titulo}" e todas as aulas?`) && acao(() => cursos.splice(ci, 1));
+const novoMod = (ci) => acao(() => cursos[ci].modulos.push({ titulo: "Novo módulo", aulas: [] }));
+const apagarMod = (ci, mi) => confirm("Apagar este módulo e as aulas dele?") && acao(() => cursos[ci].modulos.splice(mi, 1));
+const novaAula = (ci, mi) => acao(() => cursos[ci].modulos[mi].aulas.push({ titulo: "Nova aula", video: "" }));
+const apagarAula = (ci, mi, ai) => confirm("Apagar esta aula?") && acao(() => cursos[ci].modulos[mi].aulas.splice(ai, 1));
+const mover = (lista, i, d) => { const j = i + d; if (j < 0 || j >= lista.length) return; [lista[i], lista[j]] = [lista[j], lista[i]]; };
+const moverMod = (ci, mi, d) => acao(() => mover(cursos[ci].modulos, mi, d));
+const moverAula = (ci, mi, ai, d) => acao(() => mover(cursos[ci].modulos[mi].aulas, ai, d));
+function restaurar() {
+  if (!confirm("Desfazer tudo que foi feito no painel e voltar ao conteúdo original?")) return;
+  localStorage.removeItem("cursosPainel"); location.reload();
+}
+
+const thumb = (ci, mi, ai) => {
+  const v = cursos[ci].modulos[mi].aulas[ai].video;
+  return `<div class="thumb" id="th${ci}-${mi}-${ai}" style="${v ? `background-image:url(https://i.ytimg.com/vi/${v}/mqdefault.jpg)` : ""}">${v ? "" : "sem vídeo"}</div>`;
+};
+
+function desenhar() {
+  $("#app").innerHTML = `<div class="barra-topo" style="justify-content:space-between;margin-bottom:20px">
+    <div class="sec" style="margin:0">Cursos (${cursos.length})</div>
+    <div class="barra-topo"><button class="mini-btn" onclick="restaurar()">${ic("desfazer")} Voltar ao original</button><button class="btn prim" style="margin:0" onclick="novoCurso()">${ic("mais")} Novo curso</button></div></div>
+  <p style="color:var(--mut);font-size:.85rem">Tudo salva sozinho. No campo do vídeo, cole o link do YouTube (pode ser o link inteiro).</p>
+  ${cursos.map((c, ci) => `<details class="cx" ${c.id === aberto ? "open" : ""} ontoggle="if(this.open)aberto='${c.id}'">
+    <summary><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${esc(c.cor)}"></span> <span id="t${ci}">${esc(c.titulo)}</span></span>
+      <small style="color:var(--mut)">${c.modulos.length} módulos · ${c.modulos.reduce((n, m) => n + m.aulas.length, 0)} aulas${c.emBreve ? " · em breve" : ""}</small></summary>
+    <div class="l2" style="margin-top:14px">
+      <label>Nome do curso<input value="${esc(c.titulo)}" oninput="campo(${ci},'titulo',this.value)"></label>
+      <label>Preço<input value="${esc(c.preco)}" placeholder="R$ 197" oninput="campo(${ci},'preco',this.value)"></label>
+      <label>Link de compra (checkout)<input value="${esc(c.linkCompra)}" placeholder="https://pay.hotmart.com/..." oninput="campo(${ci},'linkCompra',this.value)"></label>
+      <label>Cor da capa<input type="color" value="${esc(c.cor)}" style="height:42px;padding:4px" oninput="campo(${ci},'cor',this.value)"></label>
+      <label>Capa do card · 1280×720<input value="${esc(c.capa)}" placeholder="img/capa.jpg (opcional)" oninput="campo(${ci},'capa',this.value)"></label>
+      <label>Banner do curso · 1920×640<input value="${esc(c.banner)}" placeholder="img/banner.jpg (opcional)" oninput="campo(${ci},'banner',this.value)"></label>
+      <label>Situação<select onchange="campo(${ci},'emBreve',this.value==='1')"><option value="">Disponível</option><option value="1" ${c.emBreve ? "selected" : ""}>Em breve</option></select></label>
+    </div>
+    <label>Descrição<textarea rows="2" oninput="campo(${ci},'descricao',this.value)">${esc(c.descricao)}</textarea></label>
+    ${c.modulos.map((m, mi) => `<div class="cx mod2">
+      <div class="aula2 cab">
+        <b style="color:var(--ac)">Módulo ${mi + 1}</b><span><input value="${esc(m.titulo)}" oninput="campoMod(${ci},${mi},this.value)"><input value="${esc(m.imagem)}" placeholder="Arte 9:16 · 720×1280 (opcional)" oninput="cursos[${ci}].modulos[${mi}].imagem=this.value;salvar()"></span>
+        <button class="mini-btn" onclick="moverMod(${ci},${mi},-1)" title="Subir módulo" aria-label="Subir módulo">${ic("cima")}</button><button class="mini-btn" onclick="moverMod(${ci},${mi},1)" title="Descer módulo" aria-label="Descer módulo">${ic("baixo")}</button>
+        <button class="x" onclick="apagarMod(${ci},${mi})" title="Apagar módulo" aria-label="Apagar módulo">${ic("lixo")}</button></div>
+      ${m.aulas.map((a, ai) => `<div class="aula2">
+        <span class="n" style="color:var(--mut)">${ai + 1}.</span>
+        <input value="${esc(a.titulo)}" placeholder="Título da aula" oninput="campoAula(${ci},${mi},${ai},'titulo',this.value,this)">
+        <input value="${a.video ? "https://youtu.be/" + esc(a.video) : ""}" placeholder="Cole o link do YouTube" oninput="campoAula(${ci},${mi},${ai},'video',this.value,this)">
+        ${thumb(ci, mi, ai)}
+        <span class="botoes-aula"><button class="x mover" onclick="moverAula(${ci},${mi},${ai},-1)" title="Subir aula" aria-label="Subir aula">${ic("cima")}</button><button class="x mover" onclick="moverAula(${ci},${mi},${ai},1)" title="Descer aula" aria-label="Descer aula">${ic("baixo")}</button><button class="x" onclick="apagarAula(${ci},${mi},${ai})" title="Apagar aula" aria-label="Apagar aula">${ic("lixo")}</button></span>
+      </div>`).join("")}
+      <button class="mini-btn" style="margin-top:10px" onclick="novaAula(${ci},${mi})">${ic("mais")} Aula</button></div>`).join("")}
+    <div class="barra-topo" style="margin-top:14px;justify-content:space-between">
+      <button class="mini-btn" onclick="novoMod(${ci})">${ic("mais")} Módulo</button>
+      <button class="mini-btn" style="color:#d9534f" onclick="apagarCurso(${ci})">Apagar curso</button></div>
+  </details>`).join("")}`;
+}
+desenhar();
+$("#bt").innerHTML = botaoTema();
+</script>
+</body>
+</html>

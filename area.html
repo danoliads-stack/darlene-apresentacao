@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Área de Membros</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="tema.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script src="dados.js"></script>
+<script>
+// shortcut: login, compras, progresso, notas e provas ficam só no navegador (localStorage) — é uma DEMO.
+// Para vender de verdade: login real (ex.: Supabase/Firebase), compras liberadas pelo checkout e vídeos privados (Panda/Vimeo).
+const $ = (s) => document.querySelector(s);
+const ls = (k, v) => v === undefined ? JSON.parse(localStorage.getItem(k) || "null") : localStorage.setItem(k, JSON.stringify(v));
+const obj = (k) => ls(k) || {};
+const chave = (c, m, a) => `${c}/${m}/${a}`;
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+const fundo = (cor) => `background:linear-gradient(150deg,${cor},#011208)`;
+const fundoImg = (url, cor) => url ? `background:url('${esc(url)}') center/cover` : fundo(cor); // com imagem, o texto some (a arte já traz o título)
+const curso = (id) => CURSOS.find((x) => x.id === id);
+const tem = (id) => COMPRADOS.includes(id);
+const nomeAluna = () => ls("nome") || (ls("aluna") || "Aluna").split("@")[0];
+
+function aulasDe(c) { return c.modulos.flatMap((m, mi) => m.aulas.map((a, ai) => ({ ...a, mi, ai, mod: m.titulo }))); }
+function progresso(c) {
+  const todas = aulasDe(c), f = obj("feitas");
+  const ok = todas.filter((a) => f[chave(c.id, a.mi, a.ai)]).length;
+  return { ok, total: todas.length, pct: todas.length ? Math.round((ok / todas.length) * 100) : 0 };
+}
+const xp = () => Object.keys(obj("feitas")).length * XP_AULA + Object.values(obj("provas")).filter((p) => p.ok).length * XP_PROVA;
+const nivel = (x) => NIVEIS.filter((n) => x >= n.xp).pop();
+const proxNivel = (x) => NIVEIS.find((n) => n.xp > x);
+const certificadoLiberado = (c) => progresso(c).pct === 100 && (!c.prova || obj("provas")[c.id]?.ok);
+function linkCompra(c) {
+  if (c.linkCompra) return c.linkCompra;
+  if (ESCOLA.whatsapp) return `https://wa.me/${ESCOLA.whatsapp}?text=${encodeURIComponent("Quero comprar o curso " + c.titulo)}`;
+  return "javascript:alert('Link de compra ainda não configurado (campo linkCompra no dados.js).')";
+}
+
+const marca = () => ESCOLA.logo ? `<img src="${esc(ESCOLA.logo)}" alt="${esc(ESCOLA.nome)}">` : esc(ESCOLA.nome);
+const topo = () => `<header class="top"><a href="#/" class="logo">${marca()}<small>${esc(ESCOLA.subtitulo)}</small></a>
+  <div class="top-dir">${botaoTema()}<a href="#/perfil" class="avatar" title="Meu perfil">${esc(nomeAluna()[0].toUpperCase())}</a></div></header>`;
+// itens do Menu: no celular ficam na tela Menu; no computador aparecem direto na lateral
+const MENU = [["perfil", "user", "Meu perfil"], ["anotacoes", "notas", "Anotações"], ["favoritos", "heart", "Favoritos"], ["certificados", "certificado", "Certificados"],
+  ["ao-vivo", "aovivo", "Salas ao vivo"], ["provas", "prova", "Provas"], ["ranking", "ranking", "Ranking"]];
+const nav = (ativo, meio) => `<nav class="nav">
+  <a href="#/" class="${ativo === "inicio" ? "on" : ""}"><span class="ic">${ic("home")}</span>Início</a>
+  ${meio || `<a href="#/favoritos" class="${ativo === "fav" ? "on" : ""}"><span class="ic">${ic("heart")}</span>Favoritos</a>`}
+  <a href="#/menu" class="so-cel ${ativo === "menu" ? "on" : ""}"><span class="ic">${ic("menu")}</span>Menu</a>
+  ${MENU.filter(([r]) => r !== "favoritos").map(([r, i, t]) => `<a href="#/${r}" class="so-pc ${location.hash.startsWith("#/" + r) ? "on" : ""}"><span class="ic">${ic(i)}</span>${t}</a>`).join("")}
+  <a href="painel.html" class="so-pc"><span class="ic">${ic("config")}</span>Painel (demo)</a>
+  <a href="javascript:sair()" class="so-pc"><span class="ic">${ic("sair")}</span>Sair</a>
+  <button class="recolher" onclick="recolher()" title="Recolher ou abrir o menu lateral"><span class="ic">${ic("voltar")}</span>Recolher</button></nav>`;
+// menu lateral do computador: recolhido ou aberto fica salvo no navegador
+function recolher() { ls("navCurta", !ls("navCurta")); document.documentElement.classList.toggle("nav-curta", !!ls("navCurta")); }
+document.documentElement.classList.toggle("nav-curta", !!ls("navCurta"));
+const rodape = `<footer class="rodape">© ${new Date().getFullYear()} ${esc(ESCOLA.nome)} · <a href="privacidade.html">Política de Privacidade</a>${ESCOLA.whatsapp ? ` · <a href="https://wa.me/${ESCOLA.whatsapp}" target="_blank" rel="noopener">Suporte</a>` : ""}</footer>`;
+const pagina = (titulo, corpo, ativo = "menu") => topo() + `<main class="wrap"><div class="sec">${titulo}</div>${corpo}${rodape}</main>` + nav(ativo);
+const vazio = (txt) => `<p class="aviso">${txt}</p>`;
+
+function telaLogin() {
+  return `<div class="login"><div class="foto" style="${ESCOLA.fotoLogin ? fundoImg(ESCOLA.fotoLogin) : ""}">${ESCOLA.fotoLogin ? "" : `<div><h2>${esc(ESCOLA.nome)}</h2><p>${esc(ESCOLA.subtitulo)}</p></div>`}</div>
+  <form onsubmit="entrar(event)">
+    <div style="text-align:right">${botaoTema()}</div>
+    <div class="logo">${marca()}<small>${esc(ESCOLA.subtitulo)}</small></div>
+    <label>E-mail<input type="email" name="email" required placeholder="Digite seu e-mail"></label>
+    <label>Senha<input type="password" name="senha" required placeholder="Digite sua senha"></label>
+    <button class="btn prim">Entrar</button>
+    ${rodape}
+  </form></div>`;
+}
+
+function cardCurso(c) {
+  const meu = tem(c.id), p = progresso(c);
+  const selo = c.emBreve ? `<span class="selo">Em breve</span>` : !meu ? `<span class="selo cadeado">${ic("lock")} Bloqueado</span>` : "";
+  const barra = meu ? `<div class="prog">${p.pct}% <span class="barra"><i style="width:${p.pct}%"></i></span> ${p.ok} / ${p.total} concluído</div>` : "";
+  const botao = c.emBreve ? `<span class="btn">Em breve</span>`
+    : meu ? `<a class="btn" href="#/curso/${c.id}">${ic("play")} Acessar curso</a>`
+    : `<a class="btn prim" href="${linkCompra(c)}" ${c.linkCompra || ESCOLA.whatsapp ? `target="_blank" rel="noopener"` : ""}>Quero este curso${c.preco ? ` · ${esc(c.preco)}` : ""}</a>`;
+  return `<div class="curso ${c.emBreve ? "bloq" : ""} ${!meu && !c.emBreve ? "travado" : ""}">
+    <div class="capa" style="${fundo(c.cor)}">${c.capa ? `<img src="${esc(c.capa)}" alt="">` : `<span>${esc(c.titulo)}</span>`}${selo}</div>
+    ${barra}<div class="corpo"><h3>${esc(c.titulo)}</h3><p>${esc(c.descricao)}</p>${botao}</div></div>`;
+}
+
+function telaInicio() {
+  const aviso = ls("avisoFechado") ? "" : `<div class="aviso">Olá, ${esc(nomeAluna())}! Seja bem-vinda à nossa plataforma. <button onclick="ls('avisoFechado',1);rota()" aria-label="Fechar aviso">${ic("x")}</button></div>`;
+  const meus = CURSOS.filter((c) => tem(c.id)), outros = CURSOS.filter((c) => !tem(c.id));
+  return topo() + `<main class="wrap">${aviso}
+    <div class="sec">Meus cursos</div><div class="grid">${meus.map(cardCurso).join("") || vazio("Você ainda não tem cursos.")}</div>
+    ${outros.length ? `<div class="sec">Compre também</div><div class="grid">${outros.map(cardCurso).join("")}</div>` : ""}
+    ${rodape}</main>` + nav("inicio");
+}
+
+function telaCurso(id) {
+  const c = curso(id);
+  if (!c || !tem(id)) return telaInicio();
+  const p = progresso(c), f = obj("feitas");
+  const mods = c.modulos.map((m, mi) => {
+    const pronto = m.aulas.every((_, ai) => f[chave(c.id, mi, ai)]);
+    return `<a class="mod" href="#/aula/${c.id}/${mi}/0" style="${fundoImg(m.imagem, c.cor)}" aria-label="${esc(m.titulo)}">
+      <span class="ok ${pronto ? "feito" : ""}">${ic("check")}</span>${m.imagem ? "" : `<small>Módulo ${mi + 1}</small><b>${esc(m.titulo)}</b><span>${m.aulas.length} aula(s)</span>`}</a>`;
+  }).join("");
+  const extra = c.prova ? `<div class="sec">Prova final</div><a class="linha" href="#/prova/${c.id}">${ic("prova")} Prova de ${esc(c.titulo)} <span>${p.pct === 100 ? "Disponível" : "Libera ao concluir 100% das aulas"}</span></a>` : "";
+  return topo() + `<div class="banner" style="${fundoImg(c.banner, c.cor)}">${c.banner ? "" : esc(c.titulo)}</div><main class="wrap">
+    <div class="info"><div style="display:flex;gap:18px;align-items:center"><div class="mini" style="${fundoImg(c.capa, c.cor)}">${c.capa ? "" : esc(c.titulo)}</div>
+      <div><h2>${esc(c.titulo)}</h2><span style="color:var(--mut)">${c.modulos.length} módulos</span></div></div>
+      <div class="pg"><div><span><b style="color:var(--ac)">${p.pct}%</b> de progresso</span><span>${p.ok} de ${p.total} aulas</span></div>
+      <div class="barra"><i style="width:${p.pct}%"></i></div></div></div>
+    <div class="sec">Módulos</div><div class="mods">${mods}</div>${extra}${rodape}</main>` + nav("", `<a href="#/curso/${c.id}" class="on"><span class="ic">${ic("modulos")}</span>Módulos</a>`);
+}
+
+function telaAula(id, mi, ai) {
+  const c = curso(id);
+  if (!c || !tem(id)) return telaInicio();
+  const todas = aulasDe(c), i = todas.findIndex((a) => a.mi == mi && a.ai == ai);
+  if (i < 0) return telaCurso(id);
+  const a = todas[i], k = chave(id, mi, ai), f = obj("feitas"), ant = todas[i - 1], prox = todas[i + 1];
+  const link = (x) => `#/aula/${id}/${x.mi}/${x.ai}`;
+  const lista = c.modulos.map((m, m2) => `<h4>${esc(m.titulo)}</h4>` + m.aulas.map((x, a2) =>
+    `<a href="#/aula/${id}/${m2}/${a2}" class="${m2 == mi && a2 == ai ? "atual" : ""}"><span class="c">${ic(f[chave(id, m2, a2)] ? "check" : "circle")}</span>${esc(x.titulo)}</a>`).join("")).join("");
+  const video = a.video ? `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(a.video)}" allowfullscreen allow="autoplay; encrypted-media"></iframe>` : "Vídeo em breve";
+  return topo() + `<aside class="gaveta" id="gaveta"><button class="mostrar" onclick="gaveta()">${ic("x")} Fechar</button><h3>${esc(c.titulo)}</h3>${lista}</aside>
+  <main class="wrap"><button class="mostrar" onclick="gaveta()">${ic("aulas")} Mostrar aulas</button>
+    <div class="player">${video}</div>
+    <div class="tit"><div><small style="color:var(--mut)">${esc(a.mod)}</small><h1>${String(i + 1).padStart(2, "0")}. ${esc(a.titulo)}</h1></div>
+      <button class="fav ${obj("favs")[k] ? "on" : ""}" onclick="alternar('favs','${k}')" aria-label="Favoritar" aria-pressed="${obj("favs")[k] ? "true" : "false"}">${ic("heart")}</button></div>
+    <div class="acoes">
+      ${ant ? `<a href="${link(ant)}"><b>${ic("voltar")} Anterior</b>${esc(ant.titulo)}</a>` : `<a href="#/curso/${id}"><b>${ic("voltar")} Anterior</b>Voltar ao início</a>`}
+      <button class="conc ${f[k] ? "feito" : ""}" onclick="alternar('feitas','${k}')">${ic(f[k] ? "check" : "circle")} ${f[k] ? "Aula concluída" : "Concluir aula"}</button>
+      ${prox ? `<a href="${link(prox)}"><b>Próximo ${ic("avancar")}</b>${esc(prox.titulo)}</a>` : `<span class="vazio"></span>`}
+    </div>
+    <div class="sec">Minhas anotações</div>
+    <textarea class="nota" placeholder="Escreva aqui o que quiser lembrar desta aula..." oninput="anotar('${k}', this.value)">${esc(obj("notas")[k])}</textarea>
+    <small class="salvo" id="salvo"></small>
+    ${rodape}</main>` + nav("", `<a href="#/curso/${id}"><span class="ic">${ic("voltar")}</span>Voltar</a><button onclick="gaveta()" class="on"><span class="ic">${ic("aulas")}</span>Ver aulas</button>`);
+}
+
+function listaAulas(fonte, extra) {
+  const itens = [];
+  CURSOS.filter((c) => tem(c.id)).forEach((c) => aulasDe(c).forEach((a) => {
+    const k = chave(c.id, a.mi, a.ai);
+    if (fonte[k]) itens.push(`<a class="linha col" href="#/aula/${k}"><small>${esc(c.titulo)} · ${esc(a.mod)}</small><b>${esc(a.titulo)}</b>${extra ? extra(fonte[k]) : ""}</a>`);
+  }));
+  return itens.join("");
+}
+
+function telaMenu() {
+  return pagina("Menu", `<div class="menu">${MENU.map(([r, i, t]) => `<a class="linha" href="#/${r}"><span>${ic(i)}</span> ${t}</a>`).join("")}
+    <a class="linha" href="painel.html"><span>${ic("config")}</span> Painel da administradora <span>só na demo</span></a>
+    <a class="linha" href="javascript:sair()"><span>${ic("sair")}</span> Sair</a></div>`);
+}
+
+function telaPerfil() {
+  const x = xp(), n = nivel(x), prox = proxNivel(x);
+  const pct = prox ? Math.round(((x - n.xp) / (prox.xp - n.xp)) * 100) : 100;
+  return pagina("Meu perfil", `<div class="perfil">
+    <div class="avatar grande">${esc(nomeAluna()[0].toUpperCase())}</div>
+    <h2>${esc(nomeAluna())} <span class="nv">${esc(n.nome)}</span></h2>
+    <p style="color:var(--mut)">${COMPRADOS.length} curso(s) na sua biblioteca · ${esc(ls("aluna"))}</p>
+    <div class="pg" style="max-width:320px;margin:0 auto"><div><span>${n.nome}</span><span>${prox ? prox.nome : "Nível máximo"}</span></div><div class="barra"><i style="width:${pct}%"></i></div></div>
+    <div class="chips"><span>${ic("xp")} XP total: <b>${x}</b></span><span>${ic("certificado")} Conquista: <b>${esc(n.nome)}</b></span>${prox ? `<span>Faltam <b>${prox.xp - x}</b> XP para ${esc(prox.nome)}</span>` : ""}</div>
+    <form class="dados" onsubmit="event.preventDefault();ls('nome',this.nome.value.trim()||null);rota()">
+      <label>Seu nome<input name="nome" value="${esc(ls("nome") || "")}" placeholder="Como quer ser chamada"></label><button class="btn prim">Salvar</button></form></div>`);
+}
+
+function telaCertificados() {
+  const itens = CURSOS.filter((c) => tem(c.id)).map((c) => certificadoLiberado(c)
+    ? `<a class="linha" href="#/certificado/${c.id}">${ic("certificado")} ${esc(c.titulo)} <span class="ok-txt">Baixar certificado</span></a>`
+    : `<div class="linha off">${ic("lock")} ${esc(c.titulo)} <span>${progresso(c).pct}% concluído${c.prova ? " + prova final" : ""}</span></div>`).join("");
+  return pagina("Certificados", `<p style="color:var(--mut)">O certificado libera quando você conclui 100% das aulas${CURSOS.some((c) => c.prova) ? " e é aprovada na prova final" : ""}.</p>${itens}`);
+}
+
+function telaCertificado(id) {
+  const c = curso(id);
+  if (!c || !tem(id) || !certificadoLiberado(c)) return telaCertificados();
+  const total = aulasDe(c).length;
+  return `<div class="certificado"><div class="moldura">
+    <small>${esc(ESCOLA.nome)} · ${esc(ESCOLA.subtitulo)}</small><h1>Certificado</h1><p>Certificamos que</p>
+    <div class="nome">${esc(nomeAluna())}</div>
+    <p>concluiu o curso <b>${esc(c.titulo)}</b>, com ${total} aulas, em ${new Date().toLocaleDateString("pt-BR")}.</p>
+    <div class="assin">${esc(ESCOLA.nome)}<small>Instrutora</small></div></div>
+    <div class="noprint"><button class="btn prim" onclick="print()">Imprimir / salvar PDF</button> <a class="btn" href="#/certificados">Voltar</a></div></div>`;
+}
+
+function telaAoVivo() {
+  const fmt = (d) => new Date(d).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+  const itens = AO_VIVO.map((l) => {
+    const c = curso(l.curso), libera = tem(l.curso);
+    return `<div class="linha col ${libera ? "" : "off"}"><small>${esc(c?.titulo)} · ${fmt(l.data)}</small><b>${ic(libera ? "aovivo" : "lock")} ${esc(l.titulo)}</b>
+      ${libera ? (l.link ? `<a class="btn prim" href="${esc(l.link)}" target="_blank" rel="noopener">Entrar na sala</a>` : `<span class="ok-txt">O link aparece aqui no dia</span>`) : `<span>Exclusiva para alunas deste curso</span>`}</div>`;
+  }).join("");
+  return pagina("Salas ao vivo", itens || vazio("Nenhuma live agendada no momento."));
+}
+
+function telaProvas() {
+  const itens = CURSOS.filter((c) => tem(c.id) && c.prova).map((c) => {
+    const r = obj("provas")[c.id], pronto = progresso(c).pct === 100;
+    return pronto ? `<a class="linha" href="#/prova/${c.id}">${ic("prova")} ${esc(c.titulo)} <span class="${r?.ok ? "ok-txt" : ""}">${r ? `Nota ${r.nota}% ${r.ok ? "· Aprovada" : "· Refazer"}` : "Fazer prova"}</span></a>`
+      : `<div class="linha off">${ic("lock")} ${esc(c.titulo)} <span>Conclua 100% das aulas (${progresso(c).pct}%)</span></div>`;
+  }).join("");
+  return pagina("Provas", itens || vazio("Não há provas finais disponíveis para sua conta no momento."));
+}
+
+function telaProva(id) {
+  const c = curso(id);
+  if (!c || !tem(id) || !c.prova || progresso(c).pct < 100) return telaProvas();
+  const r = obj("provas")[id];
+  return pagina(`Prova · ${esc(c.titulo)}`, `${r ? `<p class="aviso">Última nota: ${r.nota}% ${r.ok ? "— aprovada." : "— precisa de 70% para aprovar."}</p>` : ""}
+    <form class="prova" onsubmit="corrigir(event,'${id}')">${c.prova.map((q, qi) => `<fieldset><legend>${qi + 1}. ${esc(q.p)}</legend>
+      ${q.op.map((o, oi) => `<label><input type="radio" name="q${qi}" value="${oi}" required> ${esc(o)}</label>`).join("")}</fieldset>`).join("")}
+    <button class="btn prim">Enviar respostas</button></form>`);
+}
+
+function telaRanking() {
+  const eu = { nome: nomeAluna() + " (você)", xp: xp(), eu: 1 };
+  const lista = [...RANKING_DEMO, eu].sort((a, b) => b.xp - a.xp);
+  return pagina("Ranking", `<p style="color:var(--mut)">XP ganho estudando: ${XP_AULA} por aula concluída e ${XP_PROVA} por prova aprovada. Quanto mais você estuda, mais sobe.</p>
+    <div class="ranking">${lista.map((p, i) => `<div class="linha ${p.eu ? "eu" : ""}"><b class="pos ${["ouro", "prata", "bronze"][i] || ""}">${i + 1}º</b> ${esc(p.nome)} <span>${esc(nivel(p.xp).nome)} · ${p.xp} XP</span></div>`).join("")}</div>`);
+}
+
+function entrar(e) { e.preventDefault(); ls("aluna", e.target.email.value); location.hash = "#/"; rota(); }
+function sair() { localStorage.removeItem("aluna"); location.hash = ""; rota(); }
+function alternar(lista, k) { const f = obj(lista); f[k] ? delete f[k] : (f[k] = 1); ls(lista, f); rota(); }
+function anotar(k, txt) { const n = obj("notas"); txt.trim() ? (n[k] = txt) : delete n[k]; ls("notas", n); $("#salvo").innerHTML = ic("check") + " Salvo"; }
+function gaveta() { $("#gaveta").classList.toggle("aberta"); }
+function corrigir(e, id) {
+  e.preventDefault();
+  const q = curso(id).prova, certas = q.filter((x, i) => +e.target["q" + i].value === x.certa).length;
+  const nota = Math.round((certas / q.length) * 100), p = obj("provas");
+  p[id] = { nota, ok: nota >= 70 || p[id]?.ok };
+  ls("provas", p); rota();
+}
+
+const ROTAS = {
+  curso: telaCurso, aula: telaAula, favoritos: () => pagina("Favoritos", listaAulas(obj("favs")) || vazio("Nenhuma aula favoritada ainda. Toque no coração dentro da aula."), "fav"),
+  menu: telaMenu, perfil: telaPerfil, anotacoes: () => pagina("Anotações", listaAulas(obj("notas"), (t) => `<p class="trecho">${esc(t)}</p>`) || vazio("Você ainda não fez anotações. Elas ficam embaixo de cada aula.")),
+  certificados: telaCertificados, certificado: telaCertificado, "ao-vivo": telaAoVivo, provas: telaProvas, prova: telaProva, ranking: telaRanking,
+};
+function rota() {
+  const [, tela, ...p] = location.hash.split("/");
+  $("#app").innerHTML = !ls("aluna") ? telaLogin() : (ROTAS[tela] || telaInicio)(...p);
+  scrollTo(0, 0);
+}
+addEventListener("hashchange", rota);
+rota();
+</script>
+</body>
+</html>

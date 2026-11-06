@@ -1,0 +1,226 @@
+:root{--bg:#011208;--card:#061f14;--line:#16392a;--txt:#f4ecdc;--mut:#a3b5a9;--ac:#c9a45c;--ac2:#1a4a36;--nav:#03180d;--inner:#051b10;--hl:#0b2a1b;--tit:#e8d3a2;--borda:#c9a45c33;color-scheme:dark}
+/* modo claro: creme, verde escuro e dourado */
+:root[data-tema=claro]{--bg:#f7f2e8;--card:#fffdf8;--line:#e3d7c0;--txt:#1d3328;--mut:#6e7b70;--ac:#94712f;--ac2:#1f4a36;--nav:#fffdf8;--inner:#f1ead9;--hl:#efe4cb;--tit:#1f4a36;--borda:#c9a45c66;color-scheme:light}
+/* transição suave só durante a troca de modo (não atrapalha as outras animações) */
+.trocando,.trocando *{transition:background-color .5s ease,color .5s ease,border-color .5s ease,box-shadow .5s ease!important}
+:root[data-tema=claro] .curso,:root[data-tema=claro] .linha,:root[data-tema=claro] .sec{box-shadow:0 2px 10px #1d332810}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:"Poppins",system-ui,sans-serif;padding-bottom:84px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 20px}
+
+/* topo */
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.logo{font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.logo small{display:block;font-weight:400;letter-spacing:.05em;font-size:.65rem;color:var(--mut)}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--ac2);color:#f4ecdc;display:grid;place-items:center;font-weight:600}
+
+/* navegação de baixo */
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;background:var(--nav);border-top:1px solid var(--line);padding:10px 0;z-index:5}
+.nav a,.nav button{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.75rem}
+.nav .on{color:var(--ac)}
+.nav .ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem}
+.nav .on .ic{background:var(--ac);color:#13241b}
+
+/* títulos de seção */
+.sec{display:inline-block;padding:10px 22px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-weight:600;margin:28px 0 18px}
+.aviso{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);color:var(--ac);border-radius:10px;padding:12px 16px;font-size:.9rem}
+.aviso button{background:none;border:0;color:var(--ac);font-size:1.1rem}
+
+/* cards de curso */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.curso{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.capa{aspect-ratio:16/9;display:grid;place-items:center;position:relative;text-align:center;padding:20px;font-weight:700;font-size:1.3rem;text-transform:uppercase}
+.capa img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.selo{position:absolute;top:10px;left:10px;background:var(--ac);color:#13241b;font-size:.75rem;padding:6px 12px;border-radius:8px;font-weight:600}
+.prog{display:flex;align-items:center;gap:10px;font-size:.75rem;color:var(--mut);background:var(--inner);border-radius:10px;padding:10px 14px;margin:-24px 16px 0;position:relative}
+.barra{flex:1;height:5px;border-radius:5px;background:var(--line);overflow:hidden}
+.barra i{display:block;height:100%;background:var(--ac)}
+.curso .corpo{padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;flex:1}
+.curso h3{margin:4px 0 0}
+.curso p{margin:0;color:var(--mut);font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{display:block;border:1px solid var(--line);background:var(--inner);color:var(--txt);border-radius:10px;padding:13px;font-weight:600;text-transform:uppercase;font-size:.85rem;margin-top:auto}
+.btn:hover{border-color:var(--ac)}
+.btn.prim{background:var(--ac);color:#13241b;border-color:var(--ac)}
+.bloq{opacity:.55;pointer-events:none}
+
+/* página do curso */
+.banner{aspect-ratio:21/7;display:grid;place-items:center;font-size:clamp(1.6rem,5vw,3rem);font-weight:800;text-transform:uppercase;text-align:center;padding:20px}
+.info{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;margin-top:8px}
+.info .mini{width:150px;aspect-ratio:16/9;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:.8rem;text-transform:uppercase;text-align:center;padding:6px}
+.info h2{margin:0;color:var(--ac);font-size:1.2rem}
+.info .pg{min-width:240px;font-size:.85rem;color:var(--mut)}
+.pg div:first-child{display:flex;justify-content:space-between;margin-bottom:8px}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.mod{aspect-ratio:9/16;border-radius:14px;overflow:hidden;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;border:1px solid var(--borda);transition:transform .2s}
+.mod:hover{transform:translateY(-4px)}
+.mod b{font-size:1.3rem;text-transform:uppercase;line-height:1.1}
+.mod span{font-size:.8rem;color:#ffffffb0;margin-top:6px}
+.mod .ok{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:8px;background:#0006;display:grid;place-items:center;font-size:.85rem}
+.mod .ok.feito{background:var(--ac);color:#13241b}
+
+/* aula */
+.player{aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;display:grid;place-items:center;color:var(--mut)}
+.player iframe{width:100%;height:100%;border:0}
+.tit{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:20px 0}
+.tit h1{font-size:1.25rem;margin:0}
+.fav{width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-size:1.1rem}
+.fav.on{color:var(--ac);border-color:var(--ac)}.fav.on .i{fill:currentColor}
+.acoes{display:grid;grid-template-columns:1fr 2fr 1fr;gap:12px}
+.acoes a,.acoes button{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:var(--txt);font-size:.8rem;text-align:right}
+.acoes a:first-child{text-align:left}
+.acoes b{display:block;color:var(--ac)}
+.acoes .conc{text-align:center;color:var(--ac);font-size:1rem}
+.acoes .conc.feito{background:var(--ac);color:#13241b}
+.acoes .vazio{visibility:hidden}
+.mostrar{background:var(--ac);color:#13241b;border:0;border-radius:8px;padding:8px 14px;font-weight:600;margin-bottom:16px}
+.gaveta{position:fixed;top:0;bottom:0;left:0;width:min(360px,90vw);background:var(--nav);border-right:1px solid var(--line);z-index:10;overflow:auto;padding:20px;transform:translateX(-100%);transition:transform .25s}
+.gaveta.aberta{transform:none}
+.gaveta h4{color:var(--mut);margin:18px 0 8px;font-size:.8rem;text-transform:uppercase}
+.gaveta a{display:flex;gap:10px;padding:10px;border-radius:8px;font-size:.88rem}
+.gaveta a.atual{background:var(--card);color:var(--ac)}
+.gaveta a .c{color:var(--ac)}
+
+/* login */
+.login{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;margin-bottom:-84px}
+.login .foto{background:linear-gradient(160deg,#0b2a1b,#011208);display:grid;place-items:center;text-align:center;padding:40px}
+.login .foto h2{font-size:2.2rem;margin:0;letter-spacing:.1em;text-transform:uppercase}
+.login form{display:flex;flex-direction:column;justify-content:center;gap:14px;max-width:380px;width:100%;margin:auto;padding:30px}
+.login label{font-size:.85rem;color:var(--mut)}
+.login input[type=email],.login input[type=password]{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px;color:var(--txt);font:inherit;margin-top:6px}
+.login .logo{text-align:center;margin-bottom:20px;font-size:1.3rem}
+.rodape{text-align:center;color:var(--mut);font-size:.8rem;padding:30px 0 10px}
+.rodape a{text-decoration:underline}
+@media(max-width:760px){.login{grid-template-columns:1fr}.login .foto{display:none}.acoes{grid-template-columns:1fr 1fr}.acoes .conc{grid-column:1/-1;order:-1}}
+
+/* cursos travados (não comprados) */
+.selo.cadeado{background:#0009;color:#fff}
+.travado .capa span{filter:grayscale(.6) brightness(.7)}
+.travado .capa{filter:saturate(.5)}
+.mod small{font-size:.7rem;color:#ffffffa0;text-transform:uppercase;letter-spacing:.1em}
+
+/* listas do menu (menu, certificados, provas, lives, ranking, favoritos, anotações) */
+.linha{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.linha>span:last-child{margin-left:auto;color:var(--mut);font-size:.82rem;text-align:right}
+a.linha:hover{border-color:var(--ac)}
+.linha.col{flex-direction:column;align-items:flex-start;gap:4px}
+.linha.col>span:last-child,.linha.col .btn{margin:8px 0 0}
+.linha small{color:var(--mut)}
+.linha.off{opacity:.6}
+.linha.eu{border-color:var(--ac);background:var(--hl)}
+.ok-txt{color:var(--ac)!important}
+.menu .linha>span:first-child{width:28px;display:grid;place-items:center;color:var(--ac);margin-left:0}
+.pos{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line);font-size:.8rem;font-variant-numeric:tabular-nums}
+.pos.ouro{background:linear-gradient(135deg,#e2c27e,#b8904a);color:#13241b;border:0}
+.pos.prata{background:linear-gradient(135deg,#e4e4df,#a9aaa3);color:#1d2b22;border:0}
+.pos.bronze{background:linear-gradient(135deg,#d9a273,#9c6439);color:#1d1408;border:0}
+.trecho{margin:6px 0 0;color:var(--mut);font-size:.85rem;white-space:pre-wrap}
+
+/* anotações na aula */
+.nota{width:100%;min-height:120px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--txt);font:inherit;padding:14px;resize:vertical}
+.salvo{color:var(--ac);font-size:.8rem}
+
+/* perfil */
+.perfil{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px 20px}
+.avatar.grande{width:96px;height:96px;font-size:2.2rem;margin:0 auto;border:3px solid var(--ac)}
+.nv{font-size:.75rem;background:var(--ac);color:#13241b;padding:4px 10px;border-radius:8px;vertical-align:middle}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0}
+.chips span{background:var(--inner);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:.82rem}
+.chips b{color:var(--ac)}
+.dados{display:flex;gap:10px;align-items:flex-end;max-width:420px;margin:0 auto;text-align:left}
+.dados label{flex:1;font-size:.82rem;color:var(--mut)}
+.dados input{width:100%;background:var(--inner);border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--txt);font:inherit;margin-top:6px}
+
+/* prova */
+.prova fieldset{border:1px solid var(--line);border-radius:12px;background:var(--card);margin:0 0 14px;padding:16px}
+.prova legend{font-weight:600;padding:0 6px}
+.prova label{display:block;padding:8px 4px;cursor:pointer}
+
+/* certificado */
+.certificado{min-height:100vh;display:grid;place-items:center;gap:20px;padding:20px;background:#efe9dd;color:#1d2b22;margin-bottom:-84px}
+.moldura{max-width:900px;width:100%;aspect-ratio:1.414;background:#fff;border:14px double #c9a45c;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.moldura h1{font-size:3rem;letter-spacing:.2em;text-transform:uppercase;margin:10px 0;color:#1f4a36}
+.moldura .nome{font-family:"Great Vibes",cursive;font-size:3.4rem;color:#1f4a36;border-bottom:1px solid #c9a45c;padding:0 40px}
+.moldura .assin{margin-top:40px;border-top:1px solid #1d2b22;padding-top:6px;min-width:220px}
+.moldura .assin small{display:block;color:#6b7a6e}
+.noprint{display:flex;gap:10px}
+@media print{.noprint{display:none}.certificado{background:#fff;padding:0}@page{size:landscape;margin:0}}
+
+/* títulos em serifa clássica (verde escuro + dourado) */
+h1,h2,h3,.logo,.sec,.banner,.capa,.mod b,.info .mini,.perfil h2,.moldura h1{font-family:"Poppins",system-ui,sans-serif}
+.capa,.banner,.mod b,.info .mini{text-transform:none;font-weight:600;letter-spacing:0}
+.capa{font-size:1.4rem;color:#f4ecdc}
+.banner{color:#e8d3a2}
+.sec{font-size:1.2rem;color:var(--tit);border-color:var(--borda)}
+.logo{color:var(--tit)}
+.curso,.cx,.linha,.perfil{border-color:var(--borda)}
+.btn.prim,.mostrar,.nav .on .ic,.selo:not(.cadeado),.nv{background:linear-gradient(135deg,#e2c27e,#b8904a)}
+.tema{background:none;border:1px solid var(--borda);color:var(--tit);width:40px;height:40px;border-radius:50%;font-size:1.1rem}
+.top-dir{display:flex;gap:10px;align-items:center}
+.info .mini,.mod{color:#f4ecdc}
+
+/* ícones de linha (SVG) */
+.i{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+.nav .ic .i{width:22px;height:22px}
+.btn,.mostrar,.selo,.acoes .conc,.mini-btn,.chips span,.salvo,.toast{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn{display:flex}
+.acoes b{display:flex;align-items:center;gap:4px}
+.acoes a:not(:first-child) b{justify-content:flex-end}
+.acoes .conc .i{width:1.25em;height:1.25em}
+.linha>.i,.linha b>.i{color:var(--ac)}
+.linha.off>.i,.linha.off b>.i{color:var(--mut)}
+.chips .i{color:var(--ac)}
+.gaveta a .c{display:grid;place-items:center}
+.mod .ok .i{width:16px;height:16px;stroke-width:2.25}
+.aviso button{display:grid;place-items:center;width:32px;height:32px;border-radius:8px}
+.aviso button:hover{background:var(--inner)}
+.fav{display:grid;place-items:center}
+.tema{display:grid;place-items:center}
+.tema .i{width:18px;height:18px}
+.x{display:inline-grid;place-items:center;min-width:34px}
+.x.mover{height:16px;color:var(--mut)}
+.x.mover .i{width:14px;height:14px}
+
+/* superfícies do navegador */
+::selection{background:#c9a45c55;color:var(--txt)}
+html{scrollbar-color:var(--line) var(--bg);accent-color:var(--ac);caret-color:var(--ac)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:6px}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none;border-color:var(--ac)!important;box-shadow:0 0 0 3px #c9a45c33}
+.rodape a{text-underline-offset:3px;text-decoration-color:var(--borda)}
+.rodape a:hover{color:var(--ac)}
+.btn,.linha,.mini-btn,.acoes a,.acoes button,.fav,.tema,.nav a,.nav button{transition:border-color .2s,color .2s,background-color .2s}
+.nav a:hover,.nav button:hover{color:var(--txt)}
+.nav .on:hover{color:var(--ac)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.menu .linha .i{width:20px;height:20px}
+
+/* logo em imagem (assinatura) */
+.logo img{display:block;height:46px;width:auto;margin:-6px 0 -4px -4px}
+.login .logo img{height:auto;width:min(280px,100%);margin:0 auto 6px}
+.logo:has(img) small{letter-spacing:.18em;text-transform:uppercase;margin-top:2px}
+/* foto do login: meio a meio. Presa pelo topo, então o corte só pega a parte de baixo (nunca o título nem a cabeça) */
+.login .foto{background-position:center top!important;background-size:cover!important;background-color:#0a0805}
+/* tela mais estreita que 16:10: o meio a meio cortaria as laterais do título, então a arte aparece inteira */
+@media(max-aspect-ratio:8/5){.login .foto{background-size:contain!important;background-repeat:no-repeat!important}}
+@media(max-width:760px){.login{grid-template-columns:1fr}}
+
+/* computador: navegação vira menu lateral que recolhe */
+.nav .recolher,.nav .so-pc{display:none}
+@media(min-width:900px){
+  :root{--lat:232px}
+  .nav-curta{--lat:84px}
+  body:has(.nav){padding-bottom:0;padding-left:var(--lat);transition:padding-left .25s}
+  .nav{top:0;bottom:0;right:auto;width:var(--lat);flex-direction:column;justify-content:flex-start;gap:6px;padding:92px 14px 20px;border-top:0;border-right:1px solid var(--line);transition:width .25s}
+  .nav a,.nav button{flex-direction:row;gap:14px;font-size:.95rem;padding:6px 8px;border-radius:16px;white-space:nowrap;overflow:hidden;cursor:pointer}
+  .nav a:hover,.nav button:hover{background:var(--hl)}
+  .nav .ic{flex:none}
+  .nav .recolher{display:flex;margin-top:auto;font-family:inherit}
+  .nav .so-pc{display:flex}
+  .nav .so-cel{display:none}
+  .nav{overflow-y:auto;gap:2px}
+  .nav .so-cel+.so-pc{margin-top:12px;padding-top:16px;border-top:1px solid var(--line);border-radius:0 0 16px 16px}
+  .nav .ic{width:34px;height:34px}
+  .nav-curta .nav a,.nav-curta .nav button{font-size:0;gap:0;justify-content:center}
+  .nav-curta .recolher .i{transform:rotate(180deg)}
+}

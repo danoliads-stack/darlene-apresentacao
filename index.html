@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Darlene Araújo · Apresentação do projeto</title>
+<meta name="theme-color" content="#011208">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paginas.css">
+<style>
+.ap{max-width:1100px;margin:0 auto;padding:clamp(40px,7vw,90px) 20px 40px}
+.ap>header{text-align:center;margin-bottom:clamp(36px,5vw,60px)}
+.ap>header img{width:min(260px,70%);margin:0 auto 22px}
+.ap h1{font-size:clamp(2.2rem,5vw,3.4rem)}
+.ap>header p{color:var(--mut);max-width:52ch;margin:14px auto 0}
+.telas{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:22px}
+.tela{display:flex;flex-direction:column;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;transition:border-color .2s}
+.tela:hover{border-color:#c9a45c88}
+.tela img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top}
+.tela div{padding:22px 24px 26px;display:grid;gap:8px}
+.tela small{color:var(--ouro);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase}
+.tela h2{font-size:1.7rem}
+.tela p{color:var(--mut);font-size:.92rem}
+.tela span{color:var(--ouro2);font-weight:500;font-size:.92rem;margin-top:6px}
+.dica{color:var(--mut);font-size:.85rem;text-align:center;margin-top:30px}
+@media(max-width:860px){.telas{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="ap">
+  <header>
+    <img src="logo.png" alt="Darlene Araújo" width="260" height="63">
+    <h1>Sua escola de unhas, <em>do primeiro clique à aula</em></h1>
+    <p>Três páginas que trabalham juntas: a de links leva para o curso novo, a de vendas converte, e a área de membros entrega as aulas.</p>
+  </header>
+  <div class="telas">
+    <a class="tela" href="area.html"><img src="imagens-site/login.jpg" alt=""><div><small>1 · Para as alunas</small><h2>Área de membros</h2><p>Login, cursos, aulas com progresso, notas, provas, certificado e ranking.</p><span>Abrir a área de membros ›</span></div></a>
+    <a class="tela" href="aquarela.html"><img src="imagens-site/darlene-retrato.jpg" alt=""><div><small>2 · Lançamento</small><h2>Página de vendas</h2><p>Unhas em Aquarela: oferta, bônus, garantia e dúvidas.</p><span>Abrir a página de vendas ›</span></div></a>
+    <a class="tela" href="links.html"><img src="imagens-site/darlene-avatar.jpg" alt=""><div><small>3 · Bio do Instagram</small><h2>Página de links</h2><p>Redes, curso em destaque, todos os cursos e atendimento.</p><span>Abrir a página de links ›</span></div></a>
+  </div>
+  <p class="dica">Na área de membros, entre com qualquer e-mail e senha: é uma demonstração. Textos, preços e números marcados como exemplo são fictícios.</p>
+</main>
+</body>
+</html>

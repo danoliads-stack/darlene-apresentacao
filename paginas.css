@@ -1,0 +1,75 @@
+/* Página de vendas (aquarela.html) e página de links (links.html). Mesma identidade da área de membros. */
+:root{--bg:#011208;--bg2:#03180d;--card:#061f14;--line:#16392a;--ouro:#c9a45c;--ouro2:#e8d3a2;--txt:#f4ecdc;--mut:#a9baae;--nude:#f3e7df;--serif:"Bodoni Moda",Didot,"Times New Roman",serif;color-scheme:dark}
+*{box-sizing:border-box}
+html{scrollbar-color:var(--line) var(--bg);accent-color:var(--ouro);caret-color:var(--ouro);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font:400 1rem/1.65 "Poppins",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:#c9a45c55;color:var(--txt)}
+a{color:inherit}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:8px}
+h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.04;letter-spacing:-.01em;text-wrap:balance;margin:0}
+h1 em,h2 em{font-style:italic;color:var(--ouro2)}
+p{margin:0}
+.i{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* aviso de demonstração */
+.demo{background:var(--ouro2);color:#1d1408;text-align:center;font-size:.78rem;padding:7px 16px;line-height:1.4}
+.preencher{border-bottom:1px dashed var(--ouro);color:var(--ouro2);font-style:normal}
+
+/* botão principal */
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--ouro);color:#13241b;font-weight:600;text-decoration:none;padding:17px 30px;border-radius:999px;border:0;font-size:1rem;letter-spacing:.01em;box-shadow:0 12px 24px -12px #000c;transition:background-color .25s,box-shadow .25s,transform .25s}
+.cta:hover{background:var(--ouro2)}
+.cta:active{transform:translateY(1px)}
+.cta.pequeno{padding:10px 20px;font-size:.88rem;box-shadow:none}
+
+/* unhas em aquarela */
+.tip{display:block;width:100%;height:auto;filter:drop-shadow(0 10px 14px #000a)}
+.leque{position:relative;aspect-ratio:1.55;clip-path:inset(-80% -60% 0 -60%);border-bottom:1px solid #c9a45c66}
+.leque span{position:absolute;left:50%;bottom:-6%;width:15%;transform-origin:50% 230%;transform:translateX(-50%) rotate(0);transition:transform 1.3s cubic-bezier(.16,1,.3,1)}
+.leque.aberto span{transform:translateX(-50%) rotate(var(--r))}
+.amostra{width:52px;height:52px;flex:none}
+.lavado{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.leque span{transition:none}.cta{transition:none}}
+
+.rodape{text-align:center;color:var(--mut);font-size:.8rem;padding:40px 20px 120px}
+.rodape a{text-decoration:underline;text-underline-offset:3px;text-decoration-color:#c9a45c66}
+.rodape a:hover{color:var(--ouro2)}
+
+/* ---------- página de links ---------- */
+.lk{position:relative;max-width:460px;margin:0 auto;padding:36px 20px 0}
+.lk>*{position:relative;z-index:1}
+.lk .lavado{position:fixed;z-index:0}
+.perfil{text-align:center}
+.perfil .avatar{width:104px;height:104px;border-radius:50%;object-fit:cover;margin:0 auto;border:2px solid var(--ouro);padding:3px;background:var(--bg)}
+.perfil .marca{width:230px;margin:14px auto 2px}
+.perfil p{color:var(--mut);font-size:.82rem;letter-spacing:.16em;text-transform:uppercase}
+.perfil .bio{text-transform:none;letter-spacing:0;font-size:.9rem;color:#d9d6c8;max-width:34ch;margin:10px auto 0;line-height:1.5}
+.perfil .tag,.destaque .tag{display:inline-block;font:500 .7rem/1 "Poppins",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ouro);border:1px dashed #c9a45c88;border-radius:999px;padding:3px 7px;vertical-align:middle}
+.prazo-lk{display:block;text-align:center;color:var(--mut);font-size:.8rem;margin-top:12px}
+.redes{display:flex;justify-content:center;gap:10px;margin:18px 0 26px}
+.redes a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:#061f14cc;color:var(--ouro2);transition:border-color .2s,color .2s}
+.redes a:hover{border-color:var(--ouro);color:var(--ouro)}
+.redes .i{width:21px;height:21px}
+
+.destaque{display:block;text-decoration:none;border-radius:28px;overflow:hidden;background:linear-gradient(170deg,#0b2a1b,#03180d 70%);border:1px solid #c9a45c55;padding:22px 22px 24px;box-shadow:0 30px 60px -30px #000}
+.destaque .leque{width:100%;margin:0 auto 14px}
+.destaque .quando{display:flex;justify-content:center;gap:8px;align-items:center;color:var(--ouro);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.destaque .quando i{width:7px;height:7px;border-radius:50%;background:var(--ouro);box-shadow:0 0 0 4px #c9a45c22}
+.destaque h2{font-size:2.5rem;text-align:center}
+.destaque p{text-align:center;color:var(--mut);font-size:.92rem;margin:10px auto 18px;max-width:30ch}
+.destaque .cta{width:100%}
+
+.lk h3{font-family:"Poppins",system-ui,sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin:34px 0 12px;text-align:center}
+.cursos{display:grid;gap:10px}
+.curso{display:grid;grid-template-columns:96px 1fr auto;gap:14px;align-items:center;text-decoration:none;background:#061f14e6;border:1px solid var(--line);border-radius:18px;padding:8px 16px 8px 8px;transition:border-color .2s,background-color .2s}
+.curso:hover{border-color:#c9a45c88;background:#0a2a1b}
+.curso img{width:96px;aspect-ratio:16/9;object-fit:cover;border-radius:11px}
+.curso b{display:block;font-weight:500;font-size:.95rem;line-height:1.3}
+.curso small{color:var(--mut);font-size:.8rem}
+.curso .i{color:var(--ouro)}
+.curso.breve{opacity:.6}
+.botao{display:flex;align-items:center;gap:14px;text-decoration:none;background:#061f14e6;border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-top:10px;transition:border-color .2s}
+.botao:hover{border-color:#c9a45c88}
+.botao .i{color:var(--ouro);width:22px;height:22px}
+.botao span{flex:1}
+.botao small{display:block;color:var(--mut);font-size:.8rem}
