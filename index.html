@@ -24,6 +24,12 @@
 .tela p{color:var(--mut);font-size:.92rem}
 .tela span{color:var(--ouro2);font-weight:500;font-size:.92rem;margin-top:6px}
 .dica{color:var(--mut);font-size:.85rem;text-align:center;margin-top:30px}
+.vsl{max-width:900px;margin:0 auto clamp(36px,5vw,56px)}
+.vsl video{width:100%;aspect-ratio:16/9;background:#000;border-radius:20px;border:1px solid var(--line);box-shadow:0 30px 60px -30px #000}
+.trava{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ouro2);font-size:.92rem;margin-top:16px;text-align:center}
+.trava svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.telas[inert] .tela{filter:grayscale(.7);opacity:.45}
+.telas .tela{transition:filter .6s,opacity .6s,border-color .2s}
 @media(max-width:860px){.telas{grid-template-columns:1fr}}
 </style>
 </head>
@@ -34,12 +40,35 @@
     <h1>Sua escola de unhas, <em>do primeiro clique à aula</em></h1>
     <p>Três páginas que trabalham juntas: a de links leva para o curso novo, a de vendas converte, e a área de membros entrega as aulas.</p>
   </header>
-  <div class="telas">
+  <section class="vsl">
+    <video id="vsl" src="video/demonstracao.mp4" poster="video/capa.jpg" controls playsinline preload="metadata"></video>
+    <p class="trava" id="trava" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Assista ao vídeo até o fim para liberar as três páginas.</span></p>
+  </section>
+  <div class="telas" id="telas" inert>
     <a class="tela" href="area.html"><img src="imagens-site/login.jpg" alt=""><div><small>1 · Para as alunas</small><h2>Área de membros</h2><p>Login, cursos, aulas com progresso, notas, provas, certificado e ranking.</p><span>Abrir a área de membros ›</span></div></a>
     <a class="tela" href="aquarela.html"><img src="imagens-site/darlene-unhas.jpg" alt=""><div><small>2 · Lançamento</small><h2>Página de vendas</h2><p>Unhas em Aquarela: oferta, bônus, garantia e dúvidas.</p><span>Abrir a página de vendas ›</span></div></a>
     <a class="tela" href="links.html"><img src="imagens-site/darlene-cartela.jpg" alt=""><div><small>3 · Bio do Instagram</small><h2>Página de links</h2><p>Redes, curso em destaque, todos os cursos e atendimento.</p><span>Abrir a página de links ›</span></div></a>
   </div>
   <p class="dica">Na área de membros, entre com qualquer e-mail e senha: é uma demonstração. Textos, preços e números marcados como exemplo são fictícios.</p>
 </main>
+<script>
+// Libera as páginas só depois do vídeo inteiro: pular para frente volta ao ponto já assistido.
+(function(){
+  var v=document.getElementById("vsl"),telas=document.getElementById("telas"),aviso=document.querySelector("#trava span"),visto=0;
+  function liberar(){
+    telas.removeAttribute("inert");
+    document.getElementById("trava").innerHTML="<span>Páginas liberadas. Escolha por onde começar.</span>";
+    try{localStorage.setItem("videoVisto","1")}catch(e){}
+  }
+  try{if(localStorage.getItem("videoVisto")==="1"){liberar();return}}catch(e){}
+  v.addEventListener("timeupdate",function(){
+    if(!v.seeking&&v.currentTime>visto)visto=v.currentTime;
+    var falta=Math.max(0,Math.ceil(v.duration-visto));
+    if(falta)aviso.textContent="As páginas liberam em "+Math.floor(falta/60)+":"+String(falta%60).padStart(2,"0")+".";
+  });
+  v.addEventListener("seeking",function(){if(v.currentTime>visto+1)v.currentTime=visto});
+  v.addEventListener("ended",liberar);
+})();
+</script>
 </body>
 </html>
