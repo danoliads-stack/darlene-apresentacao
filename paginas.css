@@ -1,5 +1,5 @@
 /* Página de vendas (aquarela.html) e página de links (links.html). Mesma identidade da área de membros. */
-:root{--bg:#011208;--bg2:#03180d;--card:#061f14;--line:#16392a;--ouro:#c9a45c;--ouro2:#e8d3a2;--txt:#f4ecdc;--mut:#a9baae;--nude:#f3e7df;--serif:"Bodoni Moda",Didot,"Times New Roman",serif;color-scheme:dark}
+:root{--bg:#011208;--bg2:#03180d;--card:#061f14;--line:#16392a;--ouro:#c9a45c;--ouro2:#e8d3a2;--txt:#f4ecdc;--mut:#a9baae;--nude:#f3e7df;--serif:"Poppins",system-ui,sans-serif;color-scheme:dark}
 *{box-sizing:border-box}
 html{scrollbar-color:var(--line) var(--bg);accent-color:var(--ouro);caret-color:var(--ouro);scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--txt);font:400 1rem/1.65 "Poppins",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -7,8 +7,8 @@ body{margin:0;background:var(--bg);color:var(--txt);font:400 1rem/1.65 "Poppins"
 a{color:inherit}
 img{max-width:100%;display:block}
 :focus-visible{outline:2px solid var(--ouro);outline-offset:3px;border-radius:8px}
-h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.04;letter-spacing:-.01em;text-wrap:balance;margin:0}
-h1 em,h2 em{font-style:italic;color:var(--ouro2)}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.12;letter-spacing:-.02em;text-wrap:balance;margin:0}
+h1 em,h2 em{font-style:normal;color:var(--ouro2)}
 p{margin:0}
 .i{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 
