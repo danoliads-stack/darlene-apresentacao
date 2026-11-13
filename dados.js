@@ -6,6 +6,9 @@ const ESCOLA = {
   logo: "logo.png", // assinatura em dourado, fundo transparente. Vazio = mostra o nome em texto
   fotoLogin: "imagens-site/login.jpg", // foto da tela de login (ex.: "img/login.jpg")
   whatsapp: "", // ex.: "5511999999999" — usado no suporte e no botão de compra quando o curso não tem link
+  fotoBoasVindas: "imagens-site/darlene-unhas.jpg", // foto do banner de entrada da área de membros
+  // shortcut: números de exemplo até a Darlene passar os reais. Vazio [] = o banner fica sem números
+  numeros: [{ valor: "+50 mil", rotulo: "seguidoras" }, { valor: "+2.000", rotulo: "alunas" }, { valor: "12 anos", rotulo: "de unhas" }],
 };
 
 // DEMONSTRAÇÃO: cursos que a aluna de teste "comprou". Os outros aparecem travados em "Compre também".
@@ -28,9 +31,13 @@ const RANKING_DEMO = [
   { nome: "Camila O.", xp: 140 }, { nome: "Aline P.", xp: 90 }, { nome: "Bruna T.", xp: 40 },
 ];
 
+// Lives dentro da plataforma: "video" = link ou ID da transmissão no YouTube (pode ser "não listada").
+// Toda aluna cadastrada assiste, mesmo sem curso; "exclusiva: true" deixa só para quem comprou o curso.
+// "oferta" = cursos mostrados ao lado da live para comprar (vazio = todos que a aluna ainda não tem).
+// "link" = sala de fora (Zoom/Meet), usado só quando não tem "video".
 const AO_VIVO = [
-  { curso: "manutencao-f1", titulo: "Tira-dúvidas: manutenção sem descolamento", data: "2026-11-20T19:00", link: "" },
-  { curso: "formacao-f1", titulo: "Live de correção de alongamentos", data: "2026-11-27T19:00", link: "" },
+  { curso: "manutencao-f1", titulo: "Tira-dúvidas: manutenção sem descolamento", data: "2026-11-20T19:00", video: "", oferta: ["manutencao-f1", "manicure-russa"] },
+  { curso: "formacao-f1", titulo: "Live de correção de alongamentos", data: "2026-11-27T19:00", video: "", exclusiva: true },
 ];
 
 const CURSOS = [

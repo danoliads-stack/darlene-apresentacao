@@ -86,12 +86,27 @@ function cardCurso(c) {
     ${barra}<div class="corpo"><h3>${esc(c.titulo)}</h3><p>${esc(c.descricao)}</p>${botao}</div></div>`;
 }
 
+// lives: a próxima que ainda não acabou (até 3h depois do início)
+const fmtData = (d) => new Date(d).toLocaleString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+const podeVer = (l) => !l.exclusiva || tem(l.curso);
+const proximaLive = () => AO_VIVO.map((l, i) => ({ ...l, i })).filter((l) => new Date(l.data) > Date.now() - 3 * 36e5).sort((a, b) => new Date(a.data) - new Date(b.data))[0];
+const idYoutube = (v) => (String(v || "").match(/(?:youtu\.be\/|v=|embed\/|live\/|shorts\/)([\w-]{11})/) || [])[1] || (/^[\w-]{11}$/.test(v || "") ? v : "");
+
 function telaInicio() {
-  const aviso = ls("avisoFechado") ? "" : `<div class="aviso">Olá, ${esc(nomeAluna())}! Seja bem-vinda à nossa plataforma. <button onclick="ls('avisoFechado',1);rota()" aria-label="Fechar aviso">${ic("x")}</button></div>`;
   const meus = CURSOS.filter((c) => tem(c.id)), outros = CURSOS.filter((c) => !tem(c.id));
-  return topo() + `<main class="wrap">${aviso}
-    <div class="sec">Meus cursos</div><div class="grid">${meus.map(cardCurso).join("") || vazio("Você ainda não tem cursos.")}</div>
-    ${outros.length ? `<div class="sec">Compre também</div><div class="grid">${outros.map(cardCurso).join("")}</div>` : ""}
+  const live = proximaLive();
+  const hero = `<section class="hero">
+    ${ESCOLA.fotoBoasVindas ? `<img class="hero-foto" src="${esc(ESCOLA.fotoBoasVindas)}" alt="">` : ""}
+    <div class="hero-txt">
+      <small>${esc(ESCOLA.subtitulo)}</small>
+      <h1>Bem-vinda, ${esc(nomeAluna())}</h1>
+      <p>${meus.length ? "Continue de onde parou. Cada aula concluída te deixa mais perto do certificado." : "Que bom ter você aqui. Assista às lives e escolha o seu primeiro curso."}</p>
+      ${(ESCOLA.numeros || []).length ? `<div class="hero-num">${ESCOLA.numeros.map((n) => `<div><b>${esc(n.valor)}</b><span>${esc(n.rotulo)}</span></div>`).join("")}</div>` : ""}
+    </div></section>`;
+  const faixaLive = live && podeVer(live) ? `<a class="faixa-live" href="#/live/${live.i}"><span class="pulso"></span><span><small>Próxima live · ${esc(fmtData(live.data))}</small><b>${esc(live.titulo)}</b></span>${ic("avancar")}</a>` : "";
+  return topo() + `<main class="wrap">${hero}${faixaLive}
+    <h2 class="sec">Meus cursos</h2><div class="grid">${meus.map(cardCurso).join("") || vazio("Você ainda não tem cursos. Veja abaixo os cursos disponíveis.")}</div>
+    ${outros.length ? `<h2 class="sec">${meus.length ? "Compre também" : "Cursos disponíveis"}</h2><div class="grid">${outros.map(cardCurso).join("")}</div>` : ""}
     ${rodape}</main>` + nav("inicio");
 }
 
@@ -187,13 +202,33 @@ function telaCertificado(id) {
 }
 
 function telaAoVivo() {
-  const fmt = (d) => new Date(d).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
-  const itens = AO_VIVO.map((l) => {
-    const c = curso(l.curso), libera = tem(l.curso);
-    return `<div class="linha col ${libera ? "" : "off"}"><small>${esc(c?.titulo)} · ${fmt(l.data)}</small><b>${ic(libera ? "aovivo" : "lock")} ${esc(l.titulo)}</b>
-      ${libera ? (l.link ? `<a class="btn prim" href="${esc(l.link)}" target="_blank" rel="noopener">Entrar na sala</a>` : `<span class="ok-txt">O link aparece aqui no dia</span>`) : `<span>Exclusiva para alunas deste curso</span>`}</div>`;
+  const itens = AO_VIVO.map((l, i) => {
+    const c = curso(l.curso), libera = podeVer(l);
+    const botao = !libera ? `<span>Exclusiva para alunas de ${esc(c?.titulo)}</span>`
+      : l.video || !l.link ? `<a class="btn prim" href="#/live/${i}">${ic("play")} Assistir na plataforma</a>`
+      : `<a class="btn prim" href="${esc(l.link)}" target="_blank" rel="noopener">Entrar na sala</a>`;
+    return `<div class="linha col ${libera ? "" : "off"}"><small>${esc(fmtData(l.data))}${l.exclusiva ? " · só para alunas do curso" : " · aberta para todas as cadastradas"}</small><b>${ic(libera ? "aovivo" : "lock")} ${esc(l.titulo)}</b>${botao}</div>`;
   }).join("");
   return pagina("Salas ao vivo", itens || vazio("Nenhuma live agendada no momento."));
+}
+
+// sala ao vivo: vídeo do YouTube (não listado) + chat + cursos à venda para quem ainda não tem
+function telaLive(i) {
+  const l = AO_VIVO[i];
+  if (!l || !podeVer(l)) return telaAoVivo();
+  const id = idYoutube(l.video);
+  const player = id ? `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="${esc(l.titulo)}"></iframe>`
+    : `<div class="espera">${ic("aovivo")}<b>A transmissão começa ${esc(fmtData(l.data))}</b><span>Deixe esta página aberta: o vídeo aparece aqui no horário.</span></div>`;
+  // o chat do YouTube só abre embutido quando o site está no ar (embed_domain = endereço da página)
+  const chat = id ? `<iframe class="chat" src="https://www.youtube.com/live_chat?v=${id}&dark_theme=1&embed_domain=${encodeURIComponent(location.hostname)}" title="Chat da live"></iframe>` : "";
+  const venda = (l.oferta && l.oferta.length ? l.oferta.map(curso) : CURSOS).filter((c) => c && !c.emBreve && !tem(c.id));
+  const ofertas = venda.length ? `<h2 class="sec">Aproveite e garanta o seu curso</h2><div class="ofertas">${venda.map((c) => `
+    <div class="oferta"><img src="${esc(c.capa)}" alt=""><div><b>${esc(c.titulo)}</b><span>${esc(c.preco || "")}</span></div>
+      <a class="btn prim" href="${linkCompra(c)}" ${c.linkCompra || ESCOLA.whatsapp ? `target="_blank" rel="noopener"` : ""}>Comprar</a></div>`).join("")}</div>` : "";
+  return topo() + `<main class="wrap"><a class="voltar-live" href="#/ao-vivo">${ic("voltar")} Salas ao vivo</a>
+    <div class="live ${chat ? "" : "sem-chat"}"><div class="player">${player}</div>${chat}</div>
+    <div class="tit"><div><small style="color:var(--mut)">${id ? `<span class="pulso"></span> Ao vivo` : "Agendada"} · ${esc(fmtData(l.data))}</small><h1>${esc(l.titulo)}</h1></div></div>
+    ${ofertas}${rodape}</main>` + nav("", `<a href="#/ao-vivo" class="on"><span class="ic">${ic("aovivo")}</span>Ao vivo</a>`);
 }
 
 function telaProvas() {
@@ -238,7 +273,7 @@ function corrigir(e, id) {
 const ROTAS = {
   curso: telaCurso, aula: telaAula, favoritos: () => pagina("Favoritos", listaAulas(obj("favs")) || vazio("Nenhuma aula favoritada ainda. Toque no coração dentro da aula."), "fav"),
   menu: telaMenu, perfil: telaPerfil, anotacoes: () => pagina("Anotações", listaAulas(obj("notas"), (t) => `<p class="trecho">${esc(t)}</p>`) || vazio("Você ainda não fez anotações. Elas ficam embaixo de cada aula.")),
-  certificados: telaCertificados, certificado: telaCertificado, "ao-vivo": telaAoVivo, provas: telaProvas, prova: telaProva, ranking: telaRanking,
+  certificados: telaCertificados, certificado: telaCertificado, "ao-vivo": telaAoVivo, live: telaLive, provas: telaProvas, prova: telaProva, ranking: telaRanking,
 };
 function rota() {
   const [, tela, ...p] = location.hash.split("/");
