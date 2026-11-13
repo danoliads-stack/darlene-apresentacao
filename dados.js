@@ -39,8 +39,17 @@ const CURSOS = [
     titulo: "Manutenção no Molde F1",
     descricao: "Aprenda a fazer a manutenção no molde F1 com acabamento perfeito e durabilidade.",
     cor: "#2e5e45",
-    preco: "R$ 197",
-    linkCompra: "", // link do checkout (Hotmart, Kiwify...). Vazio = abre o WhatsApp
+    preco: "R$ 197", // shortcut: preço de exemplo, o checkout da Kiwify não mostra o valor sem carregar o pagamento
+    linkCompra: "https://pay.kiwify.com.br/c0DlZJT", // link do checkout (Hotmart, Kiwify...). Vazio = abre o WhatsApp
+    // subpágina do curso (curso.html?c=id). Sem "pagina" = o mini banner vai direto para a compra
+    pagina: {
+      promessa: "Domine a manutenção no Molde F1 com segurança, precisão e acabamento profissional, mesmo depois de semanas de crescimento.",
+      aprende: ["Corrigir descolamentos sem remover toda a estrutura", "Reposicionar o ponto de tensão", "Nivelar a área da cutícula com naturalidade", "Reduzir o tempo de atendimento sem perder qualidade", "Fidelizar a cliente com unhas que duram"],
+      tecnicas: ["Baby Boomer", "Esmaltação em gel vermelha", "Esmaltação em gel magnético", "Esmaltação em gel preta", "Pó cromado", "Traço cromado", "Raminho de folha"],
+      inclui: ["Certificado", "1 ano de acesso", "Moldes indicados", "Formatos: 3 quadradas, 1 bailarina e 5 almonds"],
+      obs: "Este curso não tem grupo de suporte.",
+      plataforma: "Kiwify",
+    },
     modulos: [
       { titulo: "Primeiros passos", imagem: "imagens-site/modulo-manutencao-f1-1.jpg", aulas: [{ titulo: "Seja bem-vinda", video: "" }, { titulo: "Materiais que você vai usar", video: "" }] },
       { titulo: "Preparação", imagem: "imagens-site/modulo-manutencao-f1-2.jpg", aulas: [{ titulo: "Remoção e preparo da unha", video: "" }, { titulo: "Higienização", video: "" }] },
@@ -55,7 +64,7 @@ const CURSOS = [
     id: "formacao-f1", capa: "imagens-site/capa-formacao-f1.jpg", banner: "imagens-site/banner-formacao-f1.jpg",
     titulo: "Formação Completa no Molde F1",
     descricao: "Do zero ao profissional: alongamento no molde F1 passo a passo.",
-    cor: "#24533f", preco: "R$ 497", linkCompra: "",
+    cor: "#24533f", preco: "R$ 497", linkCompra: "https://pay.kiwify.com.br/XmsV73Y", // Master Molde F1 2.0; sem descrição no checkout, então sem subpágina
     modulos: [
       { titulo: "Primeiros passos", imagem: "imagens-site/modulo-formacao-f1-1.jpg", aulas: [{ titulo: "Seja bem-vinda", video: "" }] },
       { titulo: "Técnica", imagem: "imagens-site/modulo-formacao-f1-2.jpg", aulas: [{ titulo: "Aula 1", video: "" }, { titulo: "Aula 2", video: "" }] },
@@ -65,7 +74,15 @@ const CURSOS = [
     id: "manicure-russa", capa: "imagens-site/capa-manicure-russa.jpg", banner: "imagens-site/banner-manicure-russa.jpg",
     titulo: "Manicure Russa e Blindagem",
     descricao: "Cutilagem russa com segurança e blindagem para unhas naturais mais fortes.",
-    cor: "#4f5d3a", preco: "R$ 147", linkCompra: "",
+    cor: "#4f5d3a", preco: "R$ 295", linkCompra: "https://pay.hotmart.com/L98605735Q", // Manicure PRO 2.0 na Hotmart
+    pagina: {
+      promessa: "Manicure russa com vaselina sólida para uma cutícula perfeita, e blindagem com alinhamento estrutural para a esmaltação em gel durar.",
+      aprende: ["Manicure russa com vaselina sólida", "Esmaltação em gel", "Blindagem estruturada", "Banho de gel", "Pé com esmaltação em gel", "Teoria aprofundada de cada etapa"],
+      bonus: "Manutenção no Molde F1 com naturalidade",
+      inclui: ["Grupo de suporte", "Certificado", "1 ano de acesso", "7 dias de garantia"],
+      parcelas: "ou 12x de R$ 30,51",
+      plataforma: "Hotmart",
+    },
     modulos: [{ titulo: "Primeiros passos", imagem: "imagens-site/modulo-manicure-russa-1.jpg", aulas: [{ titulo: "Seja bem-vinda", video: "" }] }],
   },
   {

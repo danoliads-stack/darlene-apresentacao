@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Curso · Darlene Araújo</title>
+<meta name="description" content="Cursos on-line de unhas com a Darlene Araújo.">
+<meta name="theme-color" content="#011208">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="paginas.css">
+<script src="tema.js"></script>
+</head>
+<body>
+<main class="cp" id="cp"></main>
+<script src="dados.js"></script>
+<script src="aquarela.js"></script>
+<script>
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+const id = new URLSearchParams(location.search).get("c");
+const c = CURSOS.find((x) => x.id === id && x.pagina);
+if (!c) location.replace("links.html"); // curso sem subpágina (ou id errado) volta para a página de links
+else {
+  const p = c.pagina;
+  const compra = c.linkCompra || (ESCOLA.whatsapp ? `https://wa.me/${ESCOLA.whatsapp}?text=${encodeURIComponent("Quero o curso " + c.titulo)}` : "#");
+  const cta = (txt) => `<a class="cta" href="${esc(compra)}" target="_blank" rel="noopener">${txt}</a>`;
+  const lista = (itens) => `<ul class="ck">${itens.map((i) => `<li>${ic("check")}<span>${esc(i)}</span></li>`).join("")}</ul>`;
+  document.title = `${c.titulo} · Darlene Araújo`;
+  document.querySelector('meta[name="description"]').content = p.promessa;
+
+  document.getElementById("cp").innerHTML = `
+    <nav class="cp-topo"><a href="links.html">${ic("voltar")} Todos os cursos</a><img src="logo.png" alt="Darlene Araújo" width="150" height="36"></nav>
+
+    <section class="cp-hero">
+      <img class="cp-banner" src="${esc(c.banner || c.capa)}" alt="${esc(c.titulo)}, com Darlene Araújo" width="1920" height="640">
+      <div class="cp-hero-txt">
+        <span class="cp-sel">Curso on-line</span>
+        <h1>${esc(c.titulo)}</h1>
+        <p class="cp-prom">${esc(p.promessa)}</p>
+        <div class="cp-compra">
+          <div class="cp-preco"><b>${esc(c.preco)}</b>${p.parcelas ? `<small>${esc(p.parcelas)}</small>` : ""}</div>
+          ${cta("Quero me inscrever")}
+        </div>
+        <small class="cp-seguro">${ic("lock")} Pagamento seguro${p.plataforma ? " pela " + esc(p.plataforma) : ""}</small>
+      </div>
+    </section>
+
+    <section class="cp-corpo">
+      <div class="cp-bloco">
+        <h2>O que você vai aprender</h2>
+        ${lista(p.aprende)}
+        ${p.bonus ? `<div class="cp-bonus"><span>Bônus</span>${esc(p.bonus)}</div>` : ""}
+      </div>
+      <div class="cp-lado">
+        ${p.tecnicas ? `<div class="cp-bloco"><h2>Técnicas e decorações</h2><div class="cp-chips">${p.tecnicas.map((t) => `<span>${esc(t)}</span>`).join("")}</div></div>` : ""}
+        <div class="cp-bloco cp-fim">
+          <h2>Está incluso</h2>
+          ${lista(p.inclui)}
+          ${p.obs ? `<p class="cp-obs">${esc(p.obs)}</p>` : ""}
+          <div class="cp-compra"><div class="cp-preco"><b>${esc(c.preco)}</b>${p.parcelas ? `<small>${esc(p.parcelas)}</small>` : ""}</div>${cta("Garantir minha vaga")}</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="rodape">© ${new Date().getFullYear()} Darlene Araújo · <a href="privacidade.html">Política de Privacidade</a></footer>`;
+
+  document.getElementById("cp").insertAdjacentHTML("afterbegin", lavado([[180, 120, 260, "#0f4a32", .55], [860, 420, 260, "#3a2c10", .45]]));
+}
+</script>
+</body>
+</html>

@@ -55,7 +55,7 @@ const compra = (c) => c.linkCompra || (ESCOLA.whatsapp ? `https://wa.me/${ESCOLA
 const arte = (c) => (c.banner || c.capa) ? `<img src="${esc(c.banner || c.capa)}" alt="" loading="lazy" width="960" height="320">` : "";
 document.getElementById("cursos").innerHTML = CURSOS.map((c) => c.emBreve
   ? `<div class="curso breve">${arte(c)}<div class="info"><span><b>${esc(c.titulo)}</b><small>Em breve</small></span></div></div>`
-  : `<a class="curso" href="${esc(compra(c))}" aria-label="${esc(c.titulo)}, ${esc(c.preco || "")}">${arte(c)}<div class="info"><span><b>Conhecer o curso</b></span><span class="preco">${esc(c.preco || "")}${ic("avancar")}</span></div></a>`).join("");
+  : `<a class="curso" href="${c.pagina ? "curso.html?c=" + encodeURIComponent(c.id) : esc(compra(c))}" aria-label="${esc(c.titulo)}, ${esc(c.preco || "")}">${arte(c)}<div class="info"><span><b>Conhecer o curso</b></span><span class="preco">${esc(c.preco || "")}${ic("avancar")}</span></div></a>`).join("");
 
 document.querySelector(".ic-entrar").outerHTML = ic("user");
 document.querySelector(".ic-whats").outerHTML = ic("whatsapp");
