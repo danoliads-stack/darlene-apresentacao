@@ -247,6 +247,7 @@ input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none;bor
   .hero{min-height:440px;border-radius:20px}
   .hero-foto{width:100%;height:68%;inset:0 0 auto 0;-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent);mask-image:linear-gradient(to bottom,#000 55%,transparent)}
   .hero-txt{padding:22px 20px}
+  .hero-txt small{display:none} /* no celular a etiqueta cairia em cima da foto */
   .hero-num div{flex:1;min-width:0;padding:10px}
   .hero-num b{font-size:1.05rem}
 }

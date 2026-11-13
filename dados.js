@@ -7,8 +7,8 @@ const ESCOLA = {
   fotoLogin: "imagens-site/login.jpg", // foto da tela de login (ex.: "img/login.jpg")
   whatsapp: "", // ex.: "5511999999999" — usado no suporte e no botão de compra quando o curso não tem link
   fotoBoasVindas: "imagens-site/darlene-unhas.jpg", // foto do banner de entrada da área de membros
-  // shortcut: números de exemplo até a Darlene passar os reais. Vazio [] = o banner fica sem números
-  numeros: [{ valor: "+50 mil", rotulo: "seguidoras" }, { valor: "+2.000", rotulo: "alunas" }, { valor: "12 anos", rotulo: "de unhas" }],
+  // números do Instagram @darlene_araujonails (nov/2026). Vazio [] = o banner fica sem números
+  numeros: [{ valor: "239 mil", rotulo: "seguidoras" }, { valor: "+4 mil", rotulo: "publicações" }, { valor: "Brasil", rotulo: "e vários países" }],
 };
 
 // DEMONSTRAÇÃO: cursos que a aluna de teste "comprou". Os outros aparecem travados em "Compre também".
