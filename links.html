@@ -52,9 +52,10 @@ document.getElementById("redes").innerHTML = REDES.map(([i, nome, url]) =>
 
 // cursos vêm do mesmo dados.js da área de membros (uma fonte só)
 const compra = (c) => c.linkCompra || (ESCOLA.whatsapp ? `https://wa.me/${ESCOLA.whatsapp}?text=${encodeURIComponent("Quero o curso " + c.titulo)}` : "#");
+const arte = (c) => (c.banner || c.capa) ? `<img src="${esc(c.banner || c.capa)}" alt="" loading="lazy" width="960" height="320">` : "";
 document.getElementById("cursos").innerHTML = CURSOS.map((c) => c.emBreve
-  ? `<div class="curso breve">${c.capa ? `<img src="${esc(c.capa)}" alt="" loading="lazy">` : "<span></span>"}<span><b>${esc(c.titulo)}</b><small>Em breve</small></span><span></span></div>`
-  : `<a class="curso" href="${esc(compra(c))}">${c.capa ? `<img src="${esc(c.capa)}" alt="" loading="lazy">` : "<span></span>"}<span><b>${esc(c.titulo)}</b><small>${esc(c.preco || "")}</small></span>${ic("avancar")}</a>`).join("");
+  ? `<div class="curso breve">${arte(c)}<div class="info"><span><b>${esc(c.titulo)}</b><small>Em breve</small></span></div></div>`
+  : `<a class="curso" href="${esc(compra(c))}" aria-label="${esc(c.titulo)}, ${esc(c.preco || "")}">${arte(c)}<div class="info"><span><b>Conhecer o curso</b></span><span class="preco">${esc(c.preco || "")}${ic("avancar")}</span></div></a>`).join("");
 
 document.querySelector(".ic-entrar").outerHTML = ic("user");
 document.querySelector(".ic-whats").outerHTML = ic("whatsapp");
